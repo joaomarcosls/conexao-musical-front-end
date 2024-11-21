@@ -1,0 +1,10 @@
+/dist
+/src-bex/www
+/src-capacitor
+/src-cordova
+/src/router/index.js
+/src/router/routes.js
+/.quasar
+/node_modules
+.eslintrc.js
+babel.config.js
