@@ -1,0 +1,96 @@
+stages:
+  - start
+  - build
+  - deploy
+
+default:
+  image: node:16
+
+# -------
+#  JOBS
+# -------
+
+start:
+  stage: start
+  when: manual
+  allow_failure: false
+  image: alpine:3
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - echo "Pipeline triggered :D"
+
+# Staging jobs
+build staging:
+  stage: build
+  only:
+    - staging
+  artifacts:
+    paths:
+      - dist/
+    name: "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_JOB_ID}"
+  script:
+    - export NODE_OPTIONS="--max-old-space-size=8192"
+    - npm install
+    - npm install -g @quasar/cli
+    - quasar clean
+    - echo "${STAGING_ENV}" > .env
+    - quasar build
+
+deploy staging:
+  stage: deploy
+  only:
+    - staging
+  dependencies:
+    - build staging
+  environment:
+    name: staging
+    url: ${STAGING_URL}
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - apt-get update
+    - apt-get install zip --assume-yes
+    - apt-get install sshpass --assume-yes
+  script:
+    - zip -r dist.zip dist
+    - sshpass -p "${STAGING_PASSWORD}" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist.zip ${USER}@${STAGING_HOST}:${STAGING_DIST_PATH}
+    - sshpass -p "${STAGING_PASSWORD}" ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no ${USER}@${STAGING_HOST} "unzip -o ${STAGING_DIST_PATH}/dist.zip -d ${STAGING_DIST_PATH}"
+
+
+# Prod jobs
+build prod:
+  stage: build
+  only:
+    - tags
+  artifacts:
+    paths:
+      - dist/
+    name: "${CI_PROJECT_NAME}-${CI_COMMIT_REF_NAME}-${CI_JOB_ID}"
+  script:
+    - export NODE_OPTIONS="--max-old-space-size=8192"
+    - npm install
+    - npm install -g @quasar/cli
+    - quasar clean
+    - echo "${PROD_ENV}" > .env
+    - quasar build
+
+deploy prod:
+  stage: deploy
+  only:
+    - tags
+  dependencies:
+    - build prod
+  environment:
+    name: prod
+    url: ${PROD_URL}
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - apt-get update
+    - apt-get install zip --assume-yes
+    - apt-get install sshpass --assume-yes
+  script:
+    - zip -r dist.zip dist
+    - sshpass -p "${PROD_PASSWORD}" scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null dist.zip ${USER}@${PROD_HOST}:${PROD_DIST_PATH}
+    - sshpass -p "${PROD_PASSWORD}" ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no ${USER}@${PROD_HOST} "unzip -o ${PROD_DIST_PATH}/dist.zip -d ${PROD_DIST_PATH}"

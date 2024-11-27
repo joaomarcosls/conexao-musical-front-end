@@ -34,7 +34,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-page-container>
+    <q-page-container class="h-full">
       <div>
         <q-drawer v-model="leftDrawerOpen" :overlay="!modoExibicao" style="
         box-shadow: rgba(0, 0, 0, 0.12) 2.4px 2.4px 3.2px;
@@ -185,6 +185,11 @@ function configurarMenu() {
   if (accessLevel === 'Administrador') {
 
     links.value.push(
+      {
+        title: 'Dashboard',
+        icon: 'la la-chart-pie',
+        link: '/a/dashboard',
+      },
       {
         title: 'Gerenciar Professores',
         icon: 'la la-school',

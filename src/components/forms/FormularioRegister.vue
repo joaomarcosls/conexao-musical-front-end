@@ -1,9 +1,9 @@
 <template>
     <div class="row q-col-gutter-md q-mb-xl">
       <div class="col-12 text-center q-mb-lg">
-        <h4 class="text-white q-ma-none">Selecione seu tipo de conta</h4>
+        <h4 class="text-white q-ma-none text-lg mt-4">Selecione seu tipo de conta</h4>
       </div>
-      <div class="col-6">
+      <div class="col-xs-12 col-sm-12 col-md-6">
         <q-btn
           class="full-width account-type-btn bg-indigo-700 text-gray-300"
           size="lg"
@@ -13,7 +13,7 @@
           :outline="tipoDeConta !== 'professor'"
         />
       </div>
-      <div class="col-6">
+      <div class="col-xs-12 col-sm-12 col-md-6">
         <q-btn
           class="full-width account-type-btn bg-indigo-700 text-gray-300"
           size="lg"

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col h-full">
     <q-card-section
       class="row text-blue-950 bg-indigo-100 dark:text-zinc-200 dark:bg-zinc-800 q-py-sm flex justify-between sec-header">
       <div class="flex items-center" style="font-size: 1.1em;">
@@ -10,7 +10,7 @@
     </q-card-section>
 
     <q-separator />
-    <div class="q-pa-md">
+    <div class="q-pa-md h-full">
       <slot />
     </div>
   </div>
